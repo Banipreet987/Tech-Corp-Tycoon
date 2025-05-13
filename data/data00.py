@@ -157,7 +157,7 @@ def account():
     clrscr()
     if int_connet():
         with open("data10.json","r") as file : acc = json.load(file)
-        if " " == acc["account_name"] :
+        if acc["name"] :
             sel = 0
             inter = 0
             while inter == 0:
