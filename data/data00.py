@@ -66,17 +66,25 @@ def stamenu(x):
     
 
 def newgame():
-    clrscr
-    print("New Game")
-    name = input("Enter Name : ")
+    clrscr()
+    print(game_name,'\n')
+    print("New Game ")
     stagename = input("Enter Stage Name : ")
     comp_name = input("Enter Company Name : ")
-    savegame = open("saves/pros","w")
-
-    # if os.path.exists("saves/save_#1"):
-    #     print("Yes")
-    # else:
-    #     print("No")
+    i = 0
+    while True :
+        loc = "../saves/save#"+str(i)+".json"
+        if os.path.exists(loc):
+            i+=1
+        else:
+            print(f"Save file name : {loc}")
+            data={
+                "stagename":stagename,
+                "comp_name":comp_name
+            }
+            open(f"/saves/save#{i}.json","w")
+            with open(loc,"w") as file : json.dump(data,file, indent=4)
+            break
 def cont():
     pass
 def loadgame():
@@ -85,37 +93,43 @@ def loadgame():
 def deletegame():
     pass
 def online():
-    inter = 0
-    menu = ["Single player","Host Game","Join Game","Create Shared Game","Join Shared Game","Exit"]
-    menu_no = len(menu) -1
-    selmenu = 0
-    while inter == 0 :
+    if int_connet():
+        inter = 0
+        menu = ["Single player","Host Game","Join Game","Create Shared Game","Join Shared Game","Exit"]
+        menu_no = len(menu) -1
+        selmenu = 0
+        while inter == 0 :
+            clrscr()
+            print(game_name,"\n")
+            print("Select option : w/s - Move  f/Enter - Select")
+            i = 0 
+            for m in menu:
+                print(m,"<<" if i == selmenu else "")
+                i += 1
+            a = ord(msvcrt.getch())
+            if a in [119,87]: #W,w
+                selmenu -= 1
+            elif a in [115,83]: #s,S
+                selmenu += 1
+            elif a in [102,70,13]: #F,f,enter
+                if selmenu == 0:
+                    Mhostgame()
+                elif selmenu == 1:
+                    Mjoingame()
+                elif selmenu == 2:
+                    start()
+            elif a in [8,27]: #esc,backspace
+                start()
+            if(selmenu < 0):
+                selmenu = menu_no
+            elif(selmenu > menu_no):
+                selmenu = 0
+    else:
         clrscr()
         print(game_name,"\n")
-        print("Select option : w/s - Move  f/Enter - Select")
-        i = 0 
-        for m in menu:
-            print(m,"<<" if i == selmenu else "")
-            i += 1
-        a = ord(msvcrt.getch())
-        if a in [119,87]: #W,w
-            selmenu -= 1
-        elif a in [115,83]: #s,S
-            selmenu += 1
-        elif a in [102,70,13]: #F,f,enter
-            if selmenu == 0:
-                Mhostgame()
-            elif selmenu == 1:
-                Mjoingame()
-            elif selmenu == 2:
-                start()
-        elif a in [8,27]: #esc,backspace
-            start()
-        if(selmenu < 0):
-            selmenu = menu_no
-        elif(selmenu > menu_no):
-            selmenu = 0
-    pass
+        print("You are offline \nEnter any key to go back")
+        msvcrt.getch()
+
 def multiplayer():
     if int_connet():
         inter = 0
@@ -161,11 +175,13 @@ def account():
             sel = 0
             inter = 0
             while inter == 0:
+                clrscr()
+                print(game_name,'\n')
                 i = 0
                 for m in ["Login","Sign","Exit"]:
-                    i += 1
                     print(m,"<<"if sel == i else "")
-                    a = ord(msvcrt.getch())
+                    i += 1
+                a = ord(msvcrt.getch())
                 if a in [119,87]: #W,w
                     sel -= 1
                 elif a in [115,83]: #s,S
@@ -179,8 +195,8 @@ def account():
                         inter == 1
                 elif a in [8,27]: #esc,backspace
                     inter == 1
-                if(sel < 2):
-                    sel = 1
+                if(sel < 0):
+                    sel = 2
                 elif(sel > 2):
                     sel = 0
 
